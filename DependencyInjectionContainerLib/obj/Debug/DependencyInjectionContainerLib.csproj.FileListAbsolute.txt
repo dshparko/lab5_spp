@@ -1,0 +1,12 @@
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\bin\Debug\DependencyInjectionContainerLib.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\bin\Debug\DependencyInjectionContainerLib.pdb
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.csprojAssemblyReference.cache
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.csproj.CoreCompileInputs.cache
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.pdb
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\bin\Debug\DependencyInjectionContainerLib.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\bin\Debug\DependencyInjectionContainerLib.pdb
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.csproj.AssemblyReference.cache
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\DependencyInjectionContainerLib\obj\Debug\DependencyInjectionContainerLib.pdb
