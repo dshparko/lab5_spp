@@ -1,0 +1,22 @@
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\Tests.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\Tests.pdb
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\DependencyInjectionContainerLib.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\nunit.framework.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\DependencyInjectionContainerLib.pdb
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\bin\Debug\nunit.framework.xml
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csprojAssemblyReference.cache
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csproj.CopyComplete
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.dll
+B:\учёба. 5 сем\СПП\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.pdb
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\Tests.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\Tests.pdb
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\DependencyInjectionContainerLib.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\nunit.framework.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\DependencyInjectionContainerLib.pdb
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\bin\Debug\nunit.framework.xml
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csproj.AssemblyReference.cache
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.csproj.CopyComplete
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.dll
+C:\Users\Lenovo\OneDrive - bsuir.by\Рабочий стол\Lab5_DependencyInjectionContainer\Tests\obj\Debug\Tests.pdb
