@@ -12,7 +12,6 @@ namespace DependencyInjectionContainerLib
             Dependencies = new Dictionary<Type, List<Dependency>>();
         }
 
-
         public void Register<TInterface, TImplementation>(LifeCycle lifeCycle)
             where TInterface : class
             where TImplementation : class, TInterface
