@@ -11,8 +11,7 @@
         {
         }
     }
-    
-    
+
     class ServiceImpl1<TRepository> : IService<TRepository> 
         where TRepository : IRepository
     {
