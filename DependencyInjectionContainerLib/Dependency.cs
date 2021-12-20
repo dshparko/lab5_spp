@@ -6,7 +6,8 @@ namespace DependencyInjectionContainerLib
     {
         public Type Type { get; }
         public LifeCycle LifeCycle { get; }
-
+        
+        
         // singleton object
         private object _instance;
         private static readonly object Locker = new object();
