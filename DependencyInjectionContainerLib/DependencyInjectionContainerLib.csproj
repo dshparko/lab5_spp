@@ -38,13 +38,13 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ClassCreator.cs">
-          <DependentUpon>DependenciesConfiguration.cs</DependentUpon>
-        </Compile>
+        <Compile Include="ClassCreator.cs" />
         <Compile Include="DependenciesConfiguration.cs" />
         <Compile Include="Dependency.cs" />
         <Compile Include="DependencyProvider.cs" />
-        <Compile Include="LifeCycle.cs" />
+        <Compile Include="Impl\ImplContainer.cs" />
+        <Compile Include="Impl\ImplNumber.cs" />
+        <Compile Include="Impl\LifeCycle.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
