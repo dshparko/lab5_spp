@@ -144,15 +144,21 @@ namespace Tests
 
             interface IB
             {
-            
+              void methodB();
             }
 
             class ClassB : IB
             {
+                public void methodB()
+                {
+                    Console.WriteLine("method b");
+                }
                 public IA ia { get; set; }
                 public ClassB(IA ia)
                 {
                     this.ia = ia;
+                    Console.WriteLine("B constructor: gets " + ia.ToString()+"\n");
+
                 }
              
             }

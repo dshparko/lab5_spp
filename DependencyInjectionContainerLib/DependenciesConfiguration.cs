@@ -1,45 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DependencyInjectionContainerLib
 {
-    public class DependenciesConfiguration
+    public class DependencyConfig
     {
-        internal Dictionary<Type, List<Dependency>> Dependencies { get; }
+        public Dictionary<Type, List<ImplContainer>> DependenciesDictionary { get; private set; }
 
-        public DependenciesConfiguration()
+        public DependencyConfig()
         {
-            Dependencies = new Dictionary<Type, List<Dependency>>();
+            DependenciesDictionary = new Dictionary<Type, List<ImplContainer>>();
         }
 
-        public void Register<TInterface, TImplementation>(LifeCycle lifeCycle)
-            where TInterface : class
-            where TImplementation : class, TInterface
+        public void Register<TDependency, TImplementation>(LifeCycle ttl = LifeCycle.InstancePerDependency,ImplNumber number = ImplNumber.None) 
+            where TDependency : class 
+            where TImplementation : TDependency
         {
-            Register(typeof(TInterface), typeof(TImplementation), lifeCycle);
+            Register(typeof(TDependency), typeof(TImplementation), ttl, number);
         }
 
-        public void Register<TInterface, TImplementation>()
-            where TInterface : class
-            where TImplementation : class, TInterface
+        public void Register(Type dependencyType, Type implementType, LifeCycle ttl, ImplNumber number)
         {
-            Register(typeof(TInterface), typeof(TImplementation), LifeCycle.Instance);
-        }
-
-        public void Register(Type @interface, Type type)
-        {
-            Register(@interface, type, LifeCycle.Instance);
-        }
-
-        public void Register(Type @interface, Type type, LifeCycle lifeCycle)
-        {
-            if (Dependencies.ContainsKey(@interface))
+            if (!IsDependency(implementType, dependencyType))
             {
-                if (@interface != type)
-                    Dependencies[@interface].Add(new Dependency(type, lifeCycle));
+                throw new ArgumentException("Incompatible parameters");
+            }
+
+            var implContainer = new ImplContainer(implementType, ttl, number);
+            if (this.DependenciesDictionary.ContainsKey(dependencyType))
+            {
+                var index = this.DependenciesDictionary[dependencyType]
+                    .FindIndex(elem => elem.ImplementationsType == implContainer.ImplementationsType);
+                if (index != -1)
+                {
+                    this.DependenciesDictionary[dependencyType].RemoveAt(index);
+                }
+
+                this.DependenciesDictionary[dependencyType].Add(implContainer);
+
             }
             else
-                Dependencies.Add(@interface, new List<Dependency> {new Dependency(type, lifeCycle)});
+            {
+                this.DependenciesDictionary.Add(dependencyType, new List<ImplContainer>() { implContainer });
+            }
+        }
+
+        private bool IsDependency(Type implementation, Type dependency)
+        {
+            //Определяет, может ли экземпляр указанного типа c быть назначен переменной текущего типа
+            return implementation.IsAssignableFrom(dependency) || implementation.GetInterfaces().Any(i => i.ToString() == dependency.ToString());
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
-using DependencyInjectionContainerLib;
 
-namespace DependencyInjection.DependencyConfiguration.ImplementationData
+namespace DependencyInjectionContainerLib
 {
     public class ImplContainer
     {

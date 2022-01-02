@@ -3,7 +3,7 @@
     
     public enum LifeCycle
     {
-        Instance,
-        Singleton
+        Singleton,
+        InstancePerDependency
     }
 }

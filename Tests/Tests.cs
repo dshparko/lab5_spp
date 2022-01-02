@@ -13,7 +13,7 @@ namespace Tests
         [Test]
         public void ValidationTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<IService, ServiceImpl>();
             dependencies.Register<IRepository, RepositoryImpl>();
 
@@ -21,24 +21,11 @@ namespace Tests
             Assert.True(true);
         }
 
-        [Test]
-        public void InvalidValidationTest()
-        {
-            var dependencies = new DependenciesConfiguration();
-            dependencies.Register<IService, ServiceImpl>();
-            dependencies.Register<IService, AbstractService>();
-            dependencies.Register<IRepository, RepositoryImpl>();
-
-            Assert.Throws<Exception>(delegate
-            {
-                var provider = new DependencyProvider(dependencies);
-            });
-        }
 
         [Test]
         public void AsSelfDependencyTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<RepositoryImpl, RepositoryImpl>();
 
             var provider = new DependencyProvider(dependencies);
@@ -51,7 +38,7 @@ namespace Tests
         public void RecursiveDependencyInjectionTest()
         {
             // конфигурация и использование контейнера
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<IService, ServiceImpl>();
             dependencies.Register<IRepository, RepositoryImpl>();
 
@@ -65,7 +52,7 @@ namespace Tests
         [Test]
         public void RecursiveDependencyInjectionAsSelfTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<ServiceImpl, ServiceImpl>();
             dependencies.Register<IRepository, RepositoryImpl>();
 
@@ -78,7 +65,7 @@ namespace Tests
         [Test]
         public void SingletonTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<IService, ServiceImpl>(LifeCycle.Singleton);
             dependencies.Register<IRepository, RepositoryImpl>(LifeCycle.Singleton);
 
@@ -93,8 +80,8 @@ namespace Tests
         [Test]
         public void InstancePerDependencyTest()
         {
-            var dependencies = new DependenciesConfiguration();
-            dependencies.Register<IService, ServiceImpl>(LifeCycle.Instance);
+            var dependencies = new DependencyConfig();
+            dependencies.Register<IService, ServiceImpl>(LifeCycle.InstancePerDependency);
             dependencies.Register<IRepository, RepositoryImpl>(LifeCycle.Singleton);
 
             var provider = new DependencyProvider(dependencies);
@@ -106,29 +93,14 @@ namespace Tests
         }
 
 
-        [Test]
-        public void GetListDependenciesTest()
-        {
-            var dependencies = new DependenciesConfiguration();
-            dependencies.Register<IService, ServiceImpl>();
-            dependencies.Register<IService, ServiceImpl1>();
-
-            var provider = new DependencyProvider(dependencies);
-            var services = provider.Resolve<IEnumerable<IService>>().ToList();
-
-            Assert.NotNull(services);
-            Assert.True(services.Count == 2);
-            Assert.IsInstanceOf(typeof(ServiceImpl),services[0]);
-            Assert.IsInstanceOf(typeof(ServiceImpl1),services[1]);
-        }
+     
 
         [Test]
         public void GenericConfigurationTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
             dependencies.Register<IRepository, MySqlRepository>(LifeCycle.Singleton);
             dependencies.Register<IService<IRepository>, ServiceImpl<IRepository>>();
-            dependencies.Register(typeof(IService<>), typeof(ServiceImpl<>));
 
             var provider = new DependencyProvider(dependencies);
             Assert.True(true);
@@ -138,12 +110,10 @@ namespace Tests
         [Test]
         public void GetGenericClassTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
            
             dependencies.Register<IRepository, MySqlRepository>();
             dependencies.Register<IService<IRepository>, ServiceImpl<IRepository>>();
-            dependencies.Register(typeof(IService<>), typeof(ServiceImpl<>));
-
             var provider = new DependencyProvider(dependencies);
             
             var service = provider.Resolve<IService<IRepository>>();
@@ -155,7 +125,7 @@ namespace Tests
         [Test]
         public void GetGenericListTest()
         {
-            var dependencies = new DependenciesConfiguration();
+            var dependencies = new DependencyConfig();
            
             dependencies.Register<IRepository, MySqlRepository>();
             dependencies.Register<IService<IRepository>, ServiceImpl<IRepository>>();
@@ -170,6 +140,37 @@ namespace Tests
             
             Assert.IsInstanceOf(typeof(ServiceImpl<IRepository>),serviceList[0]);
             Assert.IsInstanceOf(typeof(ServiceImpl1<IRepository>),serviceList[1]);
+        }
+       
+        // А-Б-А
+        [Test]
+        public void ABA_test()
+        {   
+            var config = new DependencyConfig();
+            config.Register<IA, ClassA>(LifeCycle.Singleton);
+            config.Register<IB, ClassB>(LifeCycle.Singleton);
+            DependencyProvider provider = new DependencyProvider(config);
+            ClassB b = (ClassB)provider.Resolve<IB>();
+            ClassA a = (ClassA)provider.Resolve<IA>();
+            Assert.AreEqual(b.ia, a);
+            Assert.AreEqual(b, a.ib);
+            ClassA a1 = (ClassA)b.ia;
+            Assert.AreEqual(a1.ib, b);
+        }
+
+        
+        [Test]
+        public void ABCA_test()
+        {
+            var dependencies = new DependencyConfig();
+            var provider = new DependencyProvider(dependencies);
+            dependencies.Register<IQ, Q>(LifeCycle.Singleton);
+            dependencies.Register<IW, W>(LifeCycle.Singleton);
+            dependencies.Register<IE, E>(LifeCycle.Singleton);
+            Q q = (Q)provider.Resolve<IQ>();
+            W w = (W)provider.Resolve<IW>();
+            E e = (E)provider.Resolve<IE>();
+            Assert.AreSame(q,e.iq);
         }
     }
 }
