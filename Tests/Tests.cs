@@ -4,7 +4,7 @@ using DependencyInjectionContainerLib;
 using NUnit.Framework;
 
 namespace Tests
-{
+ {
     [TestFixture]
     public class Tests
     {
@@ -162,11 +162,11 @@ namespace Tests
            
             dependencies.Register<IRepository,RepositoryImpl>();
             dependencies.Register<IService<IRepository>, ServiceImpl<IRepository>>();
-            dependencies.Register<IService<IRepository>, ServiceImpl1<IRepository>>(LifeCycle.Singleton,ImplNumber.First);
+            dependencies.Register<IService<IRepository>, ServiceImpl1<IRepository>>(LifeCycle.Singleton);
             
             var provider = new DependencyProvider(dependencies);
             
-            var service2 = provider.Resolve<IService<IRepository>>(ImplNumber.First);
+            var service2 = provider.Resolve<IService<IRepository>>();
             
             Assert.NotNull(service2);
             Assert.IsInstanceOf(typeof(ServiceImpl1<IRepository>),service2);

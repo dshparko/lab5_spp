@@ -69,27 +69,27 @@ namespace DependencyInjectionContainerLib
                 var result = CreateInstance(dependencyType,implType);
                 AddToSingletons(dependencyType, result, number);
                     _recursionStack.Pop();
-                    replaceParametersOfNullObject(dependencyType);
+                    ReplaceParametersOfNullObject(dependencyType);
             }
             return _singletons[dependencyType]
                    .Find(singletonContainer => number.HasFlag(singletonContainer.ImplNumber))
                    ?.Instance;
         }
-
-        private void replaceParametersOfNullObject(Type replaceType)
+        
+        private void ReplaceParametersOfNullObject(Type replaceType)
         {
             foreach(KeyValuePair<Type, Type> keyValuePair in nullParameters)
             {
                 if (replaceType == keyValuePair.Value)
                 {
-                    object objectWithNull = Resolve(keyValuePair.Key, ImplNumber.Any);
-                    PropertyInfo[] propertyInfos = objectWithNull.GetType().GetProperties();
+                    object nullObject = Resolve(keyValuePair.Key, ImplNumber.Any);
+                    PropertyInfo[] propertyInfos = nullObject.GetType().GetProperties();
                     for(int i = 0; i < propertyInfos.Length; i++)
                     {
                         if (propertyInfos[i].PropertyType == keyValuePair.Value){
                             _recursionStack.Pop();
                             object replaceObject = Resolve(replaceType, ImplNumber.Any);
-                            objectWithNull.GetType().GetProperty(propertyInfos[i].Name)?.SetValue(objectWithNull, replaceObject);
+                            nullObject.GetType().GetProperty(propertyInfos[i].Name)?.SetValue(nullObject, replaceObject);
                             break;
                         }
                     }

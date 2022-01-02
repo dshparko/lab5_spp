@@ -22,7 +22,7 @@ namespace DependencyInjectionContainerLib
         }
 
         public void Register(Type interfaceType, Type implementType, LifeCycle ttl, ImplNumber number)
-        {//проверка совместимости типов
+        {
             if (!IsDependency(implementType, interfaceType))
             {
                 throw new ArgumentException("Incompatible parameters");
@@ -49,8 +49,8 @@ namespace DependencyInjectionContainerLib
 
         private bool IsDependency(Type implementation, Type dependency)
         {
-            //Определяет, может ли экземпляр указанного типа c быть назначен переменной текущего типа
-            return implementation.IsAssignableFrom(dependency) || implementation.GetInterfaces().Any(i => i.ToString() == dependency.ToString());
+            return implementation.IsAssignableFrom(dependency) 
+                   || implementation.GetInterfaces().Any(i => i.ToString() == dependency.ToString());
         }
     }
 }

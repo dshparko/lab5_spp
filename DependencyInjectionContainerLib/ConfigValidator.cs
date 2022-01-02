@@ -44,7 +44,8 @@ namespace DependencyInjectionContainerLib
                         parameterType = parameter.ParameterType;
                     }
 
-                    if (parameterType.IsInterface && IsInContainer(parameterType)) continue;
+                    if (parameterType.IsInterface && IsInContainer(parameterType)) 
+                        continue;
                     this._locatedTypes.Pop();
                     return false;
                 }
