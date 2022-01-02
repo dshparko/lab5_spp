@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using DependencyInjectionContainerLib;
 using NUnit.Framework;
 
@@ -92,9 +90,7 @@ namespace Tests
             Assert.AreNotEqual(service1, service2);
         }
 
-
-     
-
+        
         [Test]
         public void GenericConfigurationTest()
         {
@@ -157,8 +153,24 @@ namespace Tests
             ClassA a1 = (ClassA)b.ia;
             Assert.AreEqual(a1.ib, b);
         }
-
         
+        
+        [Test]
+        public void GetGenericNameDependencyTest()
+        {
+            var dependencies = new DependencyConfig();
+           
+            dependencies.Register<IRepository,RepositoryImpl>();
+            dependencies.Register<IService<IRepository>, ServiceImpl<IRepository>>();
+            dependencies.Register<IService<IRepository>, ServiceImpl1<IRepository>>(LifeCycle.Singleton,ImplNumber.First);
+            
+            var provider = new DependencyProvider(dependencies);
+            
+            var service2 = provider.Resolve<IService<IRepository>>(ImplNumber.First);
+            
+            Assert.NotNull(service2);
+            Assert.IsInstanceOf(typeof(ServiceImpl1<IRepository>),service2);
+        }
         [Test]
         public void ABCA_test()
         {

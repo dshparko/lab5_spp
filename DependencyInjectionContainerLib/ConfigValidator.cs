@@ -7,13 +7,13 @@ namespace DependencyInjectionContainerLib
 {
    public class ConfigValidator
     {
-        private readonly Stack<Type> _nestedTypes;
+        private readonly Stack<Type> _locatedTypes;
         private readonly DependencyConfig _configuration;
 
         public ConfigValidator(DependencyConfig configuration)
         {
             this._configuration = configuration;
-            this._nestedTypes = new Stack<Type>();
+            this._locatedTypes = new Stack<Type>();
         }
 
         private bool IsInContainer(Type type)
@@ -23,7 +23,7 @@ namespace DependencyInjectionContainerLib
 
         private bool CanBeCreated(Type instanceType)
         {
-            this._nestedTypes.Push(instanceType);
+            this._locatedTypes.Push(instanceType);
             var constructors = instanceType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
             foreach (var constructor in constructors)
             {
@@ -45,12 +45,12 @@ namespace DependencyInjectionContainerLib
                     }
 
                     if (parameterType.IsInterface && IsInContainer(parameterType)) continue;
-                    this._nestedTypes.Pop();
+                    this._locatedTypes.Pop();
                     return false;
                 }
             }
 
-            this._nestedTypes.Pop();
+            this._locatedTypes.Pop();
             return true;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace DependencyInjectionContainerLib
@@ -20,29 +21,29 @@ namespace DependencyInjectionContainerLib
             Register(typeof(TDependency), typeof(TImplementation), ttl, number);
         }
 
-        public void Register(Type dependencyType, Type implementType, LifeCycle ttl, ImplNumber number)
-        {
-            if (!IsDependency(implementType, dependencyType))
+        public void Register(Type interfaceType, Type implementType, LifeCycle ttl, ImplNumber number)
+        {//проверка совместимости типов
+            if (!IsDependency(implementType, interfaceType))
             {
                 throw new ArgumentException("Incompatible parameters");
             }
 
             var implContainer = new ImplContainer(implementType, ttl, number);
-            if (this.DependenciesDictionary.ContainsKey(dependencyType))
+            if (this.DependenciesDictionary.ContainsKey(interfaceType))
             {
-                var index = this.DependenciesDictionary[dependencyType]
-                    .FindIndex(elem => elem.ImplementationsType == implContainer.ImplementationsType);
+                var index = this.DependenciesDictionary[interfaceType]
+                    .FindIndex(value => value.ImplementationsType == implContainer.ImplementationsType);
                 if (index != -1)
                 {
-                    this.DependenciesDictionary[dependencyType].RemoveAt(index);
+                    this.DependenciesDictionary[interfaceType].RemoveAt(index);
                 }
 
-                this.DependenciesDictionary[dependencyType].Add(implContainer);
+                this.DependenciesDictionary[interfaceType].Add(implContainer);
 
             }
             else
             {
-                this.DependenciesDictionary.Add(dependencyType, new List<ImplContainer>() { implContainer });
+                this.DependenciesDictionary.Add(interfaceType, new List<ImplContainer>() { implContainer });
             }
         }
 
