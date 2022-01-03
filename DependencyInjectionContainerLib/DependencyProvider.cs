@@ -9,34 +9,8 @@ namespace DependencyInjectionContainerLib
     {
         private readonly DependenciesConfiguration _dependencyConfiguration;
 
-        //private static List<object> singletons = new List<object>();
         private static List<object> toFill = new List<object>();
 
-        /*private void fillObjects()
-        {
-            foreach (object o in toFill)
-            {
-                foreach(object singleton in singletons)
-                {
-                    var fields = o.GetType().GetFields();
-                    foreach(FieldInfo field in fields)
-                    {
-                        if (field.FieldType.IsAssignableFrom(singleton.GetType()))
-                        {
-                            field.SetValue(o, singleton);
-                        }
-                    }
-                    var properties = o.GetType().GetProperties();
-                    foreach (PropertyInfo property in properties)
-                    {
-                        if (property.PropertyType.IsAssignableFrom(singleton.GetType()) && property.CanWrite)
-                        {
-                            property.SetValue(o, singleton);
-                        }
-                    }
-                }
-            }
-        }*/
         private void fillWithSingleton(object singleton)
         {
             foreach (object o in toFill)
@@ -71,11 +45,6 @@ namespace DependencyInjectionContainerLib
             return Resolve(parameter.ParameterType, name);
         }
 
-/*        internal object Resolve(FieldInfo field)
-        {
-            var name = field.GetCustomAttribute<DependencyKeyAttribute>()?.Key;
-            return Resolve(field.FieldType, name);
-        }*/
 
         public TInterface Resolve<TInterface>()
             where TInterface : class
