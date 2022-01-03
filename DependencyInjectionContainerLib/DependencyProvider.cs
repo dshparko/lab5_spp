@@ -15,14 +15,6 @@ namespace DependencyInjectionContainerLib
         {
             foreach (object o in toFill)
             {
-                var fields = o.GetType().GetFields();
-                foreach (FieldInfo field in fields)
-                {
-                    if (field.FieldType.IsAssignableFrom(singleton.GetType()))
-                    {
-                        field.SetValue(o, singleton);
-                    }
-                }
                 var properties = o.GetType().GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
@@ -96,7 +88,6 @@ namespace DependencyInjectionContainerLib
             object result = null;
 
                 if (_dependencyConfiguration.IsExcluded(dependency.Type))
-                    //throw new DependencyException($"Dependency type {dependency.Type} leads to recursion!");
                     return null;
                 _dependencyConfiguration.ExcludeType(dependency.Type);
 
@@ -111,7 +102,6 @@ namespace DependencyInjectionContainerLib
                         {
                             result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
                             dependency.Instance = result;
-                        //singletons.Add(result);
                         fillWithSingleton(result);
                         }
                         else
@@ -120,8 +110,7 @@ namespace DependencyInjectionContainerLib
                         }
                     }
                 }
-            toFill.Add(result);
-            //fillObjects();
+             toFill.Add(result);
             _dependencyConfiguration.RemoveFromExcluded(dependency.Type);
             
             return result;
