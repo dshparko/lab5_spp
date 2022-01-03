@@ -10,8 +10,6 @@ namespace DependencyInjectionContainerLib
     {
         private readonly DependencyConfig _configuration;
         public readonly Dictionary<Type, List<SingletonContainer>> _singletons;
-        private readonly Stack<Type> _recursionStack = new Stack<Type>();
-        private Dictionary<Type, Type> nullParameters = new Dictionary<Type, Type>();
 
         public DependencyProvider(DependencyConfig configuration)
         {
@@ -33,13 +31,6 @@ namespace DependencyInjectionContainerLib
 
         public object Resolve(Type dependencyType, ImplNumber number = ImplNumber.Any)
         {
-
-            if (_recursionStack.Contains(dependencyType))
-            {
-                return null;
-            }
-
-            _recursionStack.Push(dependencyType);
 
             object result;
             if (IsIEnumerable(dependencyType))
@@ -68,34 +59,12 @@ namespace DependencyInjectionContainerLib
             {
                 var result = CreateInstance(dependencyType,implType);
                 AddToSingletons(dependencyType, result, number);
-                    _recursionStack.Pop();
-                    ReplaceParametersOfNullObject(dependencyType);
             }
             return _singletons[dependencyType]
                    .Find(singletonContainer => number.HasFlag(singletonContainer.ImplNumber))
                    ?.Instance;
         }
-        
-        private void ReplaceParametersOfNullObject(Type replaceType)
-        {
-            foreach(KeyValuePair<Type, Type> keyValuePair in nullParameters)
-            {
-                if (replaceType == keyValuePair.Value)
-                {
-                    object nullObject = Resolve(keyValuePair.Key, ImplNumber.Any);
-                    PropertyInfo[] propertyInfos = nullObject.GetType().GetProperties();
-                    for(int i = 0; i < propertyInfos.Length; i++)
-                    {
-                        if (propertyInfos[i].PropertyType == keyValuePair.Value){
-                            _recursionStack.Pop();
-                            object replaceObject = Resolve(replaceType, ImplNumber.Any);
-                            nullObject.GetType().GetProperty(propertyInfos[i].Name)?.SetValue(nullObject, replaceObject);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+
 
         private object CreateInstance(Type dependecyType, Type implementationType)
         {
@@ -113,9 +82,9 @@ namespace DependencyInjectionContainerLib
                         parameter = Resolve(parameterInfo.ParameterType, number);
                         if(parameter == null)
                         {
-                            if (!nullParameters.ContainsKey(dependecyType))
+                            //if (!nullParameters.ContainsKey(dependecyType))
                             {
-                                nullParameters.Add(dependecyType, parameterInfo.ParameterType);
+                          //      nullParameters.Add(dependecyType, parameterInfo.ParameterType);
                             }
                         }
                     }
