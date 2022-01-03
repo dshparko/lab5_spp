@@ -2,15 +2,14 @@
 
 namespace DependencyInjectionContainerLib
 {
-    //Задает элементы приложения, к которым допустимо применить атрибут
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class DependencyKeyAttribute : Attribute
+    public class DependencyKeyAttribute : System.Attribute
     {
-        public ImplNumber ImplNumber { get; }
+        public object Key { get; }
 
-        public DependencyKeyAttribute(ImplNumber number)
+        public DependencyKeyAttribute(object key)
         {
-            this.ImplNumber = number;
+            Key = key;
         }
     }
 }

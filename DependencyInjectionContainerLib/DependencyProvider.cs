@@ -1,215 +1,209 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace DependencyInjectionContainerLib
 {
     public class DependencyProvider
     {
-        private readonly DependencyConfig _configuration;
-        public readonly Dictionary<Type, List<SingletonContainer>> _singletons; 
-        private readonly Stack<Type> _recursionStack = new Stack<Type>();
-        private Dictionary<Type, Type> nullObjects = new Dictionary<Type, Type>();
+        private readonly DependenciesConfiguration _dependencyConfiguration;
 
-        public DependencyProvider(DependencyConfig configuration)
+        //private static List<object> singletons = new List<object>();
+        private static List<object> toFill = new List<object>();
+
+        /*private void fillObjects()
         {
-            ConfigValidator configValidator = new ConfigValidator(configuration);
-            if (!configValidator.Validate())
+            foreach (object o in toFill)
             {
-                throw new ArgumentException("Wrong configuration");
-            }
-
-            this._singletons = new Dictionary<Type, List<SingletonContainer>>();
-            this._configuration = configuration;
-        }
-
-        public TDependency Resolve<TDependency>(ImplNumber number = ImplNumber.Any)
-            where TDependency : class
-        {
-            return (TDependency)Resolve(typeof(TDependency), number);
-        }
-
-        public object Resolve(Type dependencyType, ImplNumber number = ImplNumber.Any)
-        {
-
-           if (_recursionStack.Contains(dependencyType))
-            {
-                return null;
-            }
-
-            _recursionStack.Push(dependencyType);
-
-            object result;
-            if (IsIEnumerable(dependencyType))
-            {
-                result = CreateEnumerable(dependencyType.GetGenericArguments()[0]);
-            }
-            else
-            {
-                ImplContainer container = GetImplContainerByDependencyType(dependencyType, number);
-                Type requiredType = GetGeneratedType(dependencyType, container.ImplementationsType);
-                result = this.ResolveNonIEnumerable(requiredType, container.TimeToLive, dependencyType, container.ImplNumber);
-            }
-
-            return result;
-        }
-
-        private object ResolveNonIEnumerable(Type implType, LifeCycle ttl, Type dependencyType,
-            ImplNumber number)
-        {
-            if (ttl != LifeCycle.Singleton)
-            {
-                return CreateInstance(dependencyType,implType);
-            }
-
-            if (!IsInSingletons(dependencyType, implType, number))
-            {
-                var result = CreateInstance(dependencyType,implType);
-                AddToSingletons(dependencyType, result, number);
-                _recursionStack.Pop();
-                ReplaceParametersOfNullObject(dependencyType);
-            }
-            return _singletons[dependencyType]
-                   .Find(singletonContainer => number.HasFlag(singletonContainer.ImplNumber))
-                   ?.Instance;
-        }
-        
-        private void ReplaceParametersOfNullObject(Type replaceType)
-        {
-            foreach(KeyValuePair<Type, Type> keyValuePair in nullObjects)
-            {
-                if (replaceType == keyValuePair.Value)
+                foreach(object singleton in singletons)
                 {
-                    object nullObject = Resolve(keyValuePair.Key, ImplNumber.Any);
-                    PropertyInfo[] propertyInfos = nullObject.GetType().GetProperties();
-                    for(int i = 0; i < propertyInfos.Length; i++)
+                    var fields = o.GetType().GetFields();
+                    foreach(FieldInfo field in fields)
                     {
-                        if (propertyInfos[i].PropertyType == keyValuePair.Value){
-                            _recursionStack.Pop();
-                            object replaceObject = Resolve(replaceType, ImplNumber.Any);
-                            nullObject.GetType().GetProperty(propertyInfos[i].Name)?.SetValue(nullObject, replaceObject);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private object CreateInstance(Type dependecyType, Type implementationType)
-        {
-            var constructors = implementationType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-            foreach (var constructor in constructors)
-            {
-                var constructorParams = constructor.GetParameters();
-                var generatedParams = new List<dynamic>();
-                foreach (var parameterInfo in constructorParams)
-                {
-                    dynamic parameter;
-                    if (parameterInfo.ParameterType.IsInterface)
-                    {
-                        var number = parameterInfo.GetCustomAttribute<DependencyKeyAttribute>()?.ImplNumber ?? ImplNumber.Any;
-                        parameter = Resolve(parameterInfo.ParameterType, number);
-                        if(parameter == null)
+                        if (field.FieldType.IsAssignableFrom(singleton.GetType()))
                         {
-                            if (!nullObjects.ContainsKey(dependecyType))
-                            {
-                                nullObjects.Add(dependecyType, parameterInfo.ParameterType);
-                            }
+                            field.SetValue(o, singleton);
                         }
                     }
-                    else
+                    var properties = o.GetType().GetProperties();
+                    foreach (PropertyInfo property in properties)
                     {
-                        break;
+                        if (property.PropertyType.IsAssignableFrom(singleton.GetType()) && property.CanWrite)
+                        {
+                            property.SetValue(o, singleton);
+                        }
                     }
-
-                    generatedParams.Add(parameter);
+                }
+            }
+        }*/
+        private void fillWithSingleton(object singleton)
+        {
+            foreach (object o in toFill)
+            {
+                var fields = o.GetType().GetFields();
+                foreach (FieldInfo field in fields)
+                {
+                    if (field.FieldType.IsAssignableFrom(singleton.GetType()))
+                    {
+                        field.SetValue(o, singleton);
+                    }
+                }
+                var properties = o.GetType().GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    if (property.PropertyType.IsAssignableFrom(singleton.GetType()) && property.CanWrite)
+                    {
+                        property.SetValue(o, singleton);
+                    }
                 }
 
-                return constructor.Invoke(generatedParams.ToArray());
             }
-
-            throw new ArgumentException("Cannot create instance of class");
+        }
+        public DependencyProvider(DependenciesConfiguration dependencyConfiguration)
+        {
+            _dependencyConfiguration = dependencyConfiguration;
         }
 
-        private ImplContainer GetImplContainerByDependencyType(Type dependencyType, ImplNumber number)
+        internal object Resolve(ParameterInfo parameter)
         {
-            ImplContainer container;
-            if (dependencyType.IsGenericType)
-            {
-                container = GetImplementationsContainerLast(dependencyType, number);
-                container ??= GetImplementationsContainerLast(dependencyType.GetGenericTypeDefinition(), number);
-            }
-            else
-            {
-                container = GetImplementationsContainerLast(dependencyType, number);
-            }
-
-            return container;
+            var name = parameter.GetCustomAttribute<DependencyKeyAttribute>()?.Key;
+            return Resolve(parameter.ParameterType, name);
         }
 
-        private bool IsIEnumerable(Type dependencyType)
+/*        internal object Resolve(FieldInfo field)
         {
-            return dependencyType.GetInterfaces().Any(i => i.Name == "IEnumerable");
+            var name = field.GetCustomAttribute<DependencyKeyAttribute>()?.Key;
+            return Resolve(field.FieldType, name);
+        }*/
+
+        public TInterface Resolve<TInterface>()
+            where TInterface : class
+        {
+            return (TInterface)Resolve(typeof(TInterface));
         }
 
-
-
-        private Type GetGeneratedType(Type dependencyType, Type implementationType)
+        public TInterface Resolve<TInterface>(object name)
         {
-            if (dependencyType.IsGenericType && implementationType.IsGenericTypeDefinition)
+            return (TInterface)Resolve(typeof(TInterface), name);
+        }
+
+        public object Resolve(Type @interface, object key = null)
+        {
+            if (typeof(IEnumerable).IsAssignableFrom(@interface))
             {
-                return implementationType.MakeGenericType(dependencyType.GetGenericArguments());
+                return ResolveAll(@interface.GetGenericArguments()[0]);
             }
+            var dependency = GetDependency(@interface, key);
 
-            return implementationType;
+            return ResolveDependency(dependency);
         }
 
-        private IList CreateEnumerable(Type dependencyType)
+        public IEnumerable<T> ResolveAll<T>()
+            where T : class
         {
-            var implementationList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(dependencyType));
-            var implementationsContainers = this._configuration.DependenciesDictionary[dependencyType];
-            foreach (var implementationContainer in implementationsContainers)
-            {
-                var instance = this.ResolveNonIEnumerable(implementationContainer.ImplementationsType,
-                    implementationContainer.TimeToLive, dependencyType, implementationContainer.ImplNumber);
-                implementationList.Add(instance);
-            }
-
-            return implementationList;
+            return (IEnumerable<T>)ResolveAll(typeof(T));
         }
 
-        private ImplContainer GetImplementationsContainerLast(Type dependencyType, ImplNumber number)
+        public IEnumerable<object> ResolveAll(Type @interface)
         {
-            if (this._configuration.DependenciesDictionary.ContainsKey(dependencyType))
+            if (_dependencyConfiguration.TryGetAll(@interface, out var dependencies))
             {
-                return this._configuration.DependenciesDictionary[dependencyType]
-                    .FindLast(container => number.HasFlag(container.ImplNumber));
+                var collection = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(@interface));
+
+                foreach (var dependency in dependencies)
+                {
+                    collection.Add(ResolveDependency(dependency));
+                }
+
+                return (IEnumerable<object>)collection;
             }
 
             return null;
         }
 
-        private void AddToSingletons(Type dependencyType, object implementation, ImplNumber number)
+        private object ResolveDependency(Dependency dependency)
         {
-            if (this._singletons.ContainsKey(dependencyType))
-            {
-                this._singletons[dependencyType].Add(new SingletonContainer(implementation, number));
-            }
-            else
-            {
-                this._singletons.Add(dependencyType, new List<SingletonContainer>()
+            object result = null;
+
+                if (_dependencyConfiguration.IsExcluded(dependency.Type))
+                    //throw new DependencyException($"Dependency type {dependency.Type} leads to recursion!");
+                    return null;
+                _dependencyConfiguration.ExcludeType(dependency.Type);
+
+                if (dependency.LifeCycle == LifeCycle.InstancePerDependency)
                 {
-                    new SingletonContainer(implementation, number)
-                });
-            }
+                    result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
+                } else if (dependency.LifeCycle == LifeCycle.Singleton)
+                {
+                    lock (dependency)
+                    {
+                        if (dependency.Instance == null)
+                        {
+                            result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
+                            dependency.Instance = result;
+                        //singletons.Add(result);
+                        fillWithSingleton(result);
+                        }
+                        else
+                        {
+                            result = dependency.Instance;
+                        }
+                    }
+                }
+            toFill.Add(result);
+            //fillObjects();
+            _dependencyConfiguration.RemoveFromExcluded(dependency.Type);
+            
+            return result;
         }
 
-        private bool IsInSingletons(Type dependencyType, Type implType, ImplNumber number)
+
+        private Dependency GetNamedDependency(Type @interface, object key)
         {
-            var lst = this._singletons.ContainsKey(dependencyType) ? this._singletons[dependencyType] : null;
-            return lst?.Find(container => number.HasFlag(container.ImplNumber) && container.Instance.GetType() == implType) is not null;
+            if (_dependencyConfiguration.TryGetAll(@interface, out var namedDependencies))
+            {
+                foreach (var dependency in namedDependencies)
+                {
+                    if (key.Equals(dependency.Key)) return dependency;
+                }
+            }
+
+            throw new DependencyException($"Dependency with [{key}] key for type {@interface} is not registered");
+        }
+
+        private Dependency GetDependency(Type @interface, object key = null)
+        {
+            if (@interface.IsGenericType &&
+                _dependencyConfiguration.TryGet(@interface.GetGenericTypeDefinition(), out var genericDependency))
+            {
+                if (key != null)
+                {
+                    genericDependency = GetNamedDependency(@interface.GetGenericTypeDefinition(), key);
+                }
+
+                var genericType = genericDependency.Type.MakeGenericType(@interface.GenericTypeArguments);
+                if (genericDependency.Instance == null)
+                {
+                    genericDependency.Instance = Creator.CreateInstance(genericType, _dependencyConfiguration);
+                }
+                
+                var tempGenericDependency = new Dependency(genericType, genericDependency.LifeCycle, genericDependency.Key)
+                { 
+                    Instance = genericDependency.Instance 
+                };
+
+                return tempGenericDependency;
+            }
+
+            if (key != null) return GetNamedDependency(@interface, key);
+
+            if (_dependencyConfiguration.TryGet(@interface, out var dependency))
+            {
+                return dependency;
+            }
+
+            throw new DependencyException($"Dependency for type {@interface} is not registered");
         }
     }
 }

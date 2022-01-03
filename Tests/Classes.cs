@@ -201,9 +201,11 @@ namespace Tests
            class W : IW
            {
                public IE ie { get; set; }
-               public W(IE ie)
+               public IQ iq { get; set; }
+               public W(IE ie, IQ iq)
                {
                    this.ie = ie;
+                   this.iq = iq;
                }
                
            }
