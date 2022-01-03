@@ -172,7 +172,7 @@ namespace Tests
             Assert.IsInstanceOf(typeof(ServiceImpl1<IRepository>),service2);
         }
         [Test]
-        public void ABCA_test()
+        public void QWEQ_test()
         {
             var dependencies = new DependencyConfig();
             var provider = new DependencyProvider(dependencies);
